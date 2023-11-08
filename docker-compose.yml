@@ -1,0 +1,9 @@
+version: '1'
+services:
+   app:
+    container_name: counters
+    image: 'counters'
+    build:
+      context: .
+    ports:
+      - "8081:8081"
