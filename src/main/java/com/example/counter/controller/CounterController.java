@@ -3,11 +3,10 @@ package com.example.counter.controller;
 import com.example.counter.model.CounterRequest;
 import com.example.counter.service.CounterServiceImp;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 
 @RestController
@@ -20,12 +19,9 @@ public class CounterController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<String> createCounter(@RequestBody CounterRequest counterRequest) {
-        if (counterService.createCounter(counterRequest.getName())) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Counter created: " + counterRequest.getName());
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Counter with name: " + counterRequest.getName() + " already exists.");
-        }
+    public ResponseEntity<?> createCounter(@RequestBody CounterRequest counterRequest) {
+        counterService.createCounter(counterRequest.getName());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "/increment/{nameCounter}")
@@ -33,8 +29,25 @@ public class CounterController {
         return new ResponseEntity<>(counterService.incrementCounter(nameCounter), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<Map<String, Integer>> get() {
-        return new ResponseEntity<>(counterService.get(), HttpStatus.OK);
+    @GetMapping("/value/{nameCounter}")
+    public ResponseEntity<Integer> getValueCounter(@PathVariable String nameCounter) {
+        return new ResponseEntity<>(counterService.getValueCounter(nameCounter), HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/delete/{nameCounter}")
+    public ResponseEntity<?> deleteCounter(@PathVariable String nameCounter) {
+        counterService.deleteCounter(nameCounter);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/sum")
+    public ResponseEntity<Integer> sumAllCounter() {
+        return new ResponseEntity<>(counterService.sumCounterValue(), HttpStatus.OK);
+    }
+
+    @GetMapping("/nameList")
+    public ResponseEntity<List<String>> getNameCounterList() {
+        return new ResponseEntity<>(counterService.getNameCounterList(), HttpStatus.OK);
     }
 }
